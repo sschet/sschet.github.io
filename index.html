@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text File Renderer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        #text-content {
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rendered Text File</h1>
+    <div id="text-content"></div>
+
+    <script>
+        const textContent = document.getElementById('text-content');
+
+        fetch('Paper.txt')
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error('Failed to load the text file.');
+                }
+            })
+            .then(text => {
+                textContent.innerText = text;
+            })
+            .catch(error => {
+                textContent.innerText = 'Error: ' + error.message;
+            });
+    </script>
+</body>
+</html>
