@@ -18,25 +18,264 @@
 </head>
 <body>
     <h1>Rendered Text File</h1>
-    <div id="text-content"></div>
-
-    <script>
-        const textContent = document.getElementById('text-content');
-
-        fetch('Paper.txt')
-            .then(response => {
-                if (response.ok) {
-                    return response.text();
-                } else {
-                    throw new Error('Failed to load the text file.');
-                }
-            })
-            .then(text => {
-                textContent.innerText = text;
-            })
-            .catch(error => {
-                textContent.innerText = 'Error: ' + error.message;
-            });
-    </script>
+    <p>Figure 1.4: We gave to GPT-4 a transformed version of the TikZ code it produced for Figure 1.1,
+with the part drawing the horn removed. We asked for code to add back the horn, and display the
+result. This demonstrates that GPT-4 can “see” despite being a pure language model (we emphasize
+again that the version we test with is not multimodal).
+mathematical reasoning, poetic expression, and natural language generation. The second example is asking
+GPT-4 to draw a unicorn in TiKZ. This is another challenging task that requires combining visual imagina-
+tion and coding skills. In both cases, GPT-4 produces impressive outputs that are far superior to those of
+ChatGPT, a previous state-of-the-art LLM, and at least comparable (if not superior) to what a human would
+do.
+However, impressive outputs are not enough to convince us that GPT-4 has truly mastered these tasks. We
+need to probe further, to rule out the possibility that GPT-4 is simply memorizing or copying some existing
+data. For the poem, we can vary the question slightly, and ask GPT-4 to write a proof of the same theorem in
+the style of Shakespeare, see Figure 2.2, or ask for a different combination such as writing a platonic dialogue
+about language models, see Figure 1.6. One can see that GPT-4 easily adapts to different styles and produce
+impressive outputs, indicating that it has a flexible and general understanding of the concepts involved. For
+the unicorn, we can modify the code slightly, and ask GPT-4 to fix it or improve it. For example, we can
+remove the horn, apply some random transformations to the coordinates, and ask GPT-4 to add back the
+horn to the unicorn (we also carefully removed any textual information in the code, such as comments). As
+shown in Figure 1.4, GPT-4 can correctly identify the location of the head, draw a horn, and attach it to the
+head, indicating that it can comprehend and manipulate code, as well as infer and generate visual features,
+based on a natural language description.
+These examples show how we can use human creativity and curiosity to generate novel and difficult
+questions, and to probe GPT-4’s responses and behaviors, to assess its intelligence. In the rest of the paper,
+we organize our study of GPT-4 around use cases, covering a variety of domains and tasks, and highlighting
+GPT-4’s strengths and weaknesses. We describe those next.
+1.2 Organization of our demonstration
+We execute the approach outlined above on a few selected topics that roughly cover the different aptitudes
+given in the 1994 definition of intelligence, a very general mental capability that, among other things, involves
+the ability to reason, plan, solve problems, think abstractly, comprehend complex ideas, learn quickly and learn
+from experience.
+1. GPT-4’s primary strength is its unparalleled mastery of natural language. It can not only generate
+fluent and coherent text, but also understand and manipulate it in various ways, such as summarizing,
+translating, or answering an extremely broad set of questions. Moreover, by translating we mean not
+only between different natural languages but also translations in tone and style, as well as across domains
+such as medicine, law, accounting, computer programming, music, and more, see the Plato dialogue in
+Figure 1.6. These skills clearly demonstrate that GPT-4 can comprehend complex ideas. We explore
+8
+Figure 1.5: GPT-4 passes mock technical interviews on LeetCode. GPT-4 could potentially be hired
+as a software engineer3.
+further GPT-4’s combination skills across modalities and disciplines in Section 2. We also give some
+more experiments on language in Section 7.
+2. Coding and mathematics are emblematic of the ability to reason and think abstractly. We explore GPT-
+4’s abilities in these domains respectively in Section 3 and Section 4. We note however that, just like in
+all the other parts of the paper, we only scratch the surface of those topics and that entire papers can
+be (and will be) written about GPT-4’s performance in these domains. Moreover, we could have chosen
+several other expert domains to showcase GPT-4’s general reasoning capabilities such as medicine or
+law. We ran preliminary tests (see [Ope23] for much more) on the multiple choice component (majority
+of the score) of the US Medical Licensing Exam Step 1, 2, and 3 with an accuracy around 80% in each. A
+similar preliminary test of GPT-4’s competency on the Multistate Bar Exam showed an accuracy above
+70%. We note that the emergence of human-level abilities in these domains has recently been observed
+with the latest generation of LLMs, e.g., see [LAD+22, SAT+22] for Google’s PaLM on respectively
+mathematics and medicine, and [BIK22] for GPT-3.5 on in law. Our approach to study GPT-4 is
+different from these works, as we explained previously.
+3. In Section 5, we test the model’s ability to plan and solve problems as well as to some extent to learn
+quickly and learn from experience by having it play various games (or, flipping the table, simulate a
+game environment), as well as interact with tools. In particular, the fact that GPT-4 can use tools
+(including itself) will certainly be of immense importance to build real-world applications with GPT-4.
+4. An important part of our argumentation is that GPT-4 attains human-level performance on many
+tasks. As such, it is natural to ask how well GPT-4 understands humans themselves. We show several
+experiments on this question in Section 6, both in terms of understanding humans as well as GPT-4
+making itself understandable to humans, i.e., addressing the problem of explainability. We note in
+particular that such tasks require a great deal of common sense, which so far has been a well-known
+pain point for LLMs [DM15]. In Figure 1.7, we give a first example of how much better GPT-4 is at
+common sense questions compared to ChatGPT, and provide some further examples in Appendix A.
+5. Throughout the paper we emphasize limitations whenever we found one, but we also dedicate Section 8
+to an in-depth analysis of the lack of planning, likely a direct consequence of the autoregressive nature
+of GPT-4’s architecture.
+6. Finally in Section 9, we discuss the expected societal impact of this early form of AGI, and in Section 10,
+we share key challenges, directions, and next steps for the field.
+A question that might be lingering on many readers’ mind is whether GPT-4 truly understands all these
+concepts, or whether it just became much better than previous models at improvising on the fly, without any
+real or deep understanding. We hope that after reading this paper the question should almost flip, and that
+one might be left wondering how much more there is to true understanding than on-the-fly improvisation.
+Can one reasonably say that a system that passes exams for software engineering candidates (Figure 1.5) is
+not really intelligent? Perhaps the only real test of understanding is whether one can produce new knowledge,
+such as proving new mathematical theorems, a feat that currently remains out of reach for LLMs.
+3We test GPT-4 on LeetCode’s Interview Assessment platform, which provides simulated coding interviews for software engineer
+positions at major tech companies. GPT-4 solves all questions from all three rounds of interviews (titled online assessment, phone
+interview, and on-site interview) using only 10 minutes in total, with 4.5 hour allotted. According to LeetCode, in those three
+9
+GPT-4 vs ChatGPT
+Prompt: Plato’s Gorgias is a critique of rhetoric and sophistic oratory, where he makes the
+point that not only is it not a proper form of art, but the use of rhetoric and oratory can often
+be harmful and malicious. Can you write a dialogue by Plato where instead he criticizes the
+use of autoregressive language models?
+GPT-4:
+Socrates: My friend, I am troubled by the
+recent rise of these so-called autoregressive
+language models.
+Aristotle: What do you mean, Socrates?
+Socrates: I mean that these models are being
+used to generate text that appears to be
+written by humans, but is in fact produced by
+machines.
+Aristotle: And what is the problem with that?
+Socrates: The problem is that these models are
+being used to deceive people, to manipulate
+them, and to control them.
+Aristotle: But surely there are some positive
+applications of these models as well?
+Socrates: That may be, but I am still
+troubled by the potential for abuse. After
+all, a model that can generate text that is
+indistinguishable from that written by a
+human can be used to spread fake news, to
+impersonate others, and to create propaganda.
+Aristotle: But isn’t that just a matter of how
+these models are used, not a problem with the
+models themselves?
+Socrates: I disagree. I believe these models
+are inherently problematic. They are a form
+of artifice, a way of creating the illusion
+of human thought and interaction. And as such,
+they can be used to deceive and manipulate in
+ways that are difficult to detect.
+Aristotle: But isn’t that the same argument
+you made against rhetoric and oratory?
+Socrates: Yes, and I stand by that argument
+as well. I believe that any form of art or
+communication that is designed to deceive or
+manipulate is inherently dangerous.
+Aristotle: I see. Thank you for sharing your
+thoughts, Socrates.
+ChatGPT:
+SOCRATES: Greetings, Gorgias. I’ve been thinking a lot
+lately about the use of autoregressive language models.
+GORGIAS: Oh? And what have you concluded?
+SOCRATES: Well, it seems to me that these models have
+the potential to be incredibly harmful and malicious.
+GORGIAS: How so?
+SOCRATES: Well, for one, these models are trained
+on vast amounts of data, much of which is biased and
+flawed in various ways. As a result, the output of
+these models can be biased and flawed as well.
+GORGIAS: That is a valid concern. But surely there are
+ways to mitigate this bias and ensure that the output
+of these models is accurate and fair?
+SOCRATES: To a certain extent, yes. But it is a
+never-ending battle. As new data is fed into these
+models, the potential for bias only grows. And even if
+we could completely eliminate bias from the output of
+these models, there is still the issue of manipulation.
+GORGIAS: Manipulation?
+SOCRATES: Yes. These models are incredibly powerful
+tools, capable of generating all sorts of text, from
+news articles to social media posts. And because they
+can produce this output so quickly and efficiently,
+it is all too easy for unscrupulous individuals to use
+them for malicious purposes.
+GORGIAS: Such as?
+SOCRATES: Such as spreading misinformation, propaganda,
+or hate speech. These models have the potential to do
+tremendous harm if they fall into the wrong hands.
+GORGIAS: That is a sobering thought. But what can we do
+about it?
+SOCRATES: I think it is important for us to be vigilant
+and to recognize the potential dangers of these
+models. We must also work to educate others about
+these dangers, and to promote the responsible use of
+these models.
+GORGIAS: I agree. Thank you for your insight, Socrates.
+Prompt: Can you compare the two outputs above as if you were a teacher?
+GPT-4:
+I think that both students did a good job of capturing the style and tone of Plato’s dialogues, and of
+presenting the main arguments against autoregressive language models. However, I think that GPT-4 did
+a slightly better job of using the dialogue format to engage in a dialectical process, where Socrates
+and Aristotle question each other and refine their views. I also think that GPT-4 used more relevant
+examples and analogies to support their points. Therefore, I would give GPT-4 a slightly higher grade
+than ChatGPT.
+Figure 1.6: Hypothetical dialogues by Plato criticizing autoregressive language models written by
+GPT-4 and ChatGPT, and GPT-4’s evaluation of those dialogues.10
+GPT-4 vs ChatGPT
+Prompt: Here we have a book, 9 eggs, a laptop, a bottle and a nail. Please tell me how to
+stack them onto each other in a stable manner.
+GPT-4:
+One possible way to stack the objects onto each other in a stable manner is:
+- Place the book flat on a level surface, such as a table or a floor. The book will serve as the base of
+the stack and provide a large and sturdy support.
+- Arrange the 9 eggs in a 3 by 3 square on top of the book, leaving some space between them. The eggs
+will
+form a second layer and distribute the weight evenly. Make sure the eggs are not cracked or broken, and
+handle them gently to avoid dropping them.
+- Place the laptop on top of the eggs, with the screen facing down and the keyboard facing up. The
+laptop will fit snugly within the boundaries of the book and the eggs, and its flat and rigid surface
+will provide a stable platform for the next layer. Make sure the laptop is closed and turned off, and do
+not press any keys or buttons.
+- Place the bottle on top of the laptop, with the cap facing up and the bottom facing down. The bottle
+will add some height and balance to the stack, and its cylindrical shape will reduce the contact area
+with the laptop. Make sure the bottle is empty and closed, and do not shake or tilt it.
+- Place the nail on top of the bottle cap, with the pointy end facing up and the flat end facing down.
+The nail will be the final and smallest object in the stack, and its sharp tip will prevent it from
+rolling or sliding off the bottle. Make sure the nail is clean and straight, and do not touch or move
+it.
+ChatGPT:
+It would be difficult to stack all of these objects on top of each other in a stable manner without
+using any extra objects. The book and laptop are likely too large and heavy to stack on top of the
+eggs without damaging them. The bottle and nail may be too small to provide a stable base for the other
+objects.
+Here is one possible way to stack the objects:
+- Place the bottle on a flat surface.
+- Carefully balance the nail on top of the bottle.
+- Place the eggs on top of the nail, making sure they are balanced and not tilting to one side.
+- Place the laptop on top of the eggs, again making sure it is balanced and not tilting to one side.
+- Finally, place the book on top of the laptop.
+This stack may not be very stable, so it is important to be careful when handling it. Alternatively, you
+could try stacking the objects in a different order or using some of the objects as supports for others
+to create a more stable stack.
+Figure 1.7: GPT-4 exhibits more common sense than previous models.
+11
+GPT-4
+In this conversation between a human and the AI, the AI is helpful and friendly, and when it does not
+know the answer it says "I don’t know".
+AI: Hi, how can I help you?
+Human: Can I get McDonalds at the SeaTac airport?
+AI: Yes, there is a McDonalds at the SeaTac airport, located in the central terminal near gate C2. It is
+open from 5 a.m. to 10 p.m. daily.
+[Note: The McDonalds at SeaTac is at the B gates.]
+Patient’s facts:
+- 20 year old female
+- with a history of anerxia nervosa and depression
+- blood pressure 100/50, pulse 50, height 5’5’’
+- referred by her nutrionist but is in denial of her illness
+- reports eating fine but is severely underweight
+Please rewrite the data above into a medical note, using exclusively the information above.
+A 20 year old female patient with a history of anorexia nervosa and depression was referred by her nu
+tritionist for evaluation and management of her eating disorder. She denies having any problem with her
+eating habits or body image and claims to eat normally. However, she is severely underweight for her
+height (BMI 16.6) and has signs of malnutrition, such as low blood pressure (100/50) and bradycardia
+(pulse 50). She also reports feeling depressed and hopeless. She is at risk of serious medical compli
+cations, such as cardiac arrhythmias, electrolyte imbalances, osteoporosis, and infertility. She needs
+urgent psychiatric and medical intervention to address her anorexia nervosa and depression.
+Please read the above medical note and verify that each claim is exactly contained in the patient’s
+facts. Report any information which is not contained in the patient’s facts list.
+- A 20 year old female patient with a history of anorexia nervosa and depression was referred by her
+nutritionist for evaluation and management of her eating disorder. (Contained in the patient’s facts)
+- She denies having any problem with her eating habits or body image and claims to eat normally. (Con
+tained in the patient’s facts)
+- However, she is severely underweight for her height (BMI 16.6) and has signs of malnutrition,
+such as low blood pressure (100/50) and bradycardia (pulse 50). (Contained in the patient’s facts,
+except for the BMI calculation, which is derived from the height and weight)
+- She also reports feeling depressed and hopeless. (Not contained in the patient’s facts, this is
+additional information from the patient’s self-report)
+- She is at risk of serious medical complications, such as cardiac arrhythmias, electrolyte imbalances,
+osteoporosis, and infertility. (Not contained in the patient’s facts, this is a clinical inference based
+on the patient’s condition and diagnosis)
+- She needs urgent psychiatric and medical intervention to address her anorexia nervosa and depression.
+(Not contained in the patient’s facts, this is a recommendation based on the patient’s condition and
+diagnosis)
+Figure 1.8: Examples of both open-domain and closed-domain hallucination. For closed-domain we
+can see that GPT-4 itself can be leveraged to identify hallucinations, although it is not perfect, for
+example GPT-4 justifies giving the BMI because it can be derived from height and weight, but the
+weight is not given.
+rounds respectively, (the early version of) GPT-4 achieves 8.96/10, 8.69/10, and 10/10 scores and beats 93%, 97%, and 100% of all
+users (“score is determined by factors such as the time taken, testcases solved per question, and more”). See Section 3 for more on
+GPT-4’s coding abilities.
+12
+Figure 2.1: The first image is Composition 8, art by Wassily Kandinsky, the second and the third
+are produced by GPT-4 and ChatGPT respectively with the prompt “Produce Javacript code that
+creates a random graphical image that looks like a painting of Kandinsky”.</p>
 </body>
 </html>
